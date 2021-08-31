@@ -1,0 +1,3 @@
+aws_region = "<region>"
+aws_profile = "<profile>"
+project_name = "<project_name>"
