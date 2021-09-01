@@ -83,3 +83,12 @@ module "kafka" {
     subnet_az1 = module.network.private_subnet_group_id1
     subnet_az2 = module.network.private_subnet_group_id2
 }
+
+module "ec2" {
+    source = "./ec2"
+    project_name = var.project_name
+    security_group_id = module.network.vpc_security_group_ids[0]
+    subnet_id = module.network.public_subnet_group_id1
+    kafka_topic = "pokemon-catches-topic"
+    zookeeper_connect_string = module.kafka.zookeeper_connect_string
+}

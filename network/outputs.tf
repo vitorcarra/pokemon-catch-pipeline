@@ -10,6 +10,10 @@ output "private_subnet_group_id2" {
     value = aws_subnet.private2.id
 }
 
+output "public_subnet_group_id1" {
+    value = aws_subnet.public.id
+}
+
 output "vpc_id" {
     value = aws_vpc.main.id
 }
