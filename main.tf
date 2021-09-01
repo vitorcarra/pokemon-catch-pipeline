@@ -59,12 +59,27 @@ module "lambda" {
         }
     ]
 
-    vpc_subnet_ids         = [module.network.private_subnet_group_id1, module.network.private_subnet_group_id2]
+    vpc_subnet_ids = tolist([module.network.private_subnet_group_id1, module.network.private_subnet_group_id2])
+    vpc_security_group_ids = [module.network.vpc_security_group_ids[0]]
     attach_network_policy = true
 
     layers = [
         module.lambda_layer.lambda_layer_arn
     ]
 
+    environment_variables = {
+      "kafka_brokker" = module.kafka.bootstrap_brokers_tls,
+      "kafka_topic" = "pokemon-catches-topic"
+    }
+
     timeout = 120
+}
+
+module "kafka" {
+    source = "./kafka"
+
+    project_name = var.project_name
+    kafka_sg = module.network.vpc_security_group_ids[0]
+    subnet_az1 = module.network.private_subnet_group_id1
+    subnet_az2 = module.network.private_subnet_group_id2
 }
