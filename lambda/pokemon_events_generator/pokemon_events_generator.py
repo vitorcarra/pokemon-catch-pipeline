@@ -5,12 +5,14 @@ import random
 from faker import Faker
 from uuid import uuid4
 from datetime import datetime
+import os
 
 def lambda_handler(event, context):
     # initialize faker
     Faker.seed(0)
     fake = Faker()
-    
+    kafka_brokers = os.getenv('kafka_broker').split(',')
+    kafka_topic = os.getenv('kafka_topic')    
 
     # load pokemon dataset
     pokemons = pd.read_csv(filepath_or_buffer="./data/pokemon.csv", delimiter=',', encoding="utf-8")
@@ -19,7 +21,11 @@ def lambda_handler(event, context):
     events_to_generate_quantity = random.randint(10, 50)
 
     # create kafka producer
-    #producer = KafkaProducer(value_serializer=lambda m: json.dumps(m).encode('ascii'))
+    producer = KafkaProducer(
+        bootstrap_servers=kafka_brokers, 
+        security_protocol="SSL", 
+        value_serializer=lambda m: json.dumps(m).encode('ascii')
+    )
 
     # generate pokemon catches
     for _ in range(events_to_generate_quantity):
@@ -41,17 +47,9 @@ def lambda_handler(event, context):
             "country": location[3]
         }
 
+        # producer.send(kafka_topic, pokemon_catch_event)
         print(pokemon_catch_event)
     
-    
-    
-    task_op = {
-        "'message": "Hai, Calling from AWS Lambda"
-    }
-    # print(json.dumps(task_op))
-    #producer.send_messages("topic_atx_ticket_update",json.dumps(task_op).encode('utf-8'))
-    # print(producer.send_messages)
-    #return ("Messages Sent to Kafka Topic")
 
 if __name__ == '__main__':
     lambda_handler(None, None)

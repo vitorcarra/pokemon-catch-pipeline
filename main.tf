@@ -68,7 +68,7 @@ module "lambda" {
     ]
 
     environment_variables = {
-      "kafka_brokker" = module.kafka.bootstrap_brokers_tls,
+      "kafka_broker" = module.kafka.bootstrap_brokers_tls,
       "kafka_topic" = "pokemon-catches-topic"
     }
 
