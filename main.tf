@@ -91,4 +91,15 @@ module "ec2" {
     subnet_id = module.network.public_subnet_group_id1
     kafka_topic = "pokemon-catches-topic"
     zookeeper_connect_string = module.kafka.zookeeper_connect_string
+    region = var.aws_region
+    kafka_bootstrap_servers = module.kafka.bootstrap_brokers_tls
+    elastichost = module.elasticsearch.es_endpoint
+}
+
+module "elasticsearch" {
+    source = "./elasticsearch"
+    default_sg = module.network.vpc_security_group_ids[0]
+    private_subnet_group_id1 = module.network.private_subnet_group_id1
+    private_subnet_group_id2 = module.network.private_subnet_group_id2
+    public_subnet_group_id1 = module.network.public_subnet_group_id1
 }

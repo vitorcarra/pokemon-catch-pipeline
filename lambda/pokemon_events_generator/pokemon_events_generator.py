@@ -47,8 +47,8 @@ def lambda_handler(event, context):
             "country": location[3]
         }
 
-        # producer.send(kafka_topic, pokemon_catch_event)
-        print(pokemon_catch_event)
+        producer.send(kafka_topic, pokemon_catch_event)
+        # print(pokemon_catch_event)
     
 
 if __name__ == '__main__':
