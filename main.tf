@@ -104,3 +104,24 @@ module "elasticsearch" {
     public_subnet_group_id1 = module.network.public_subnet_group_id1
     allow_ip_address = var.allow_ip_address
 }
+
+# cloudwatch trigger lambda
+resource "aws_cloudwatch_event_rule" "every_ten_seconds" {
+  name                = "every-ten-seconds"
+  description         = "Fires every 10 seconds"
+  schedule_expression = "rate(1 minute)"
+}
+
+resource "aws_cloudwatch_event_target" "check_every_ten_seconds" {
+  rule      = "${aws_cloudwatch_event_rule.every_ten_seconds.name}"
+  target_id = "lambda"
+  arn       = "${module.lambda.lambda_function_arn}"
+}
+
+resource "aws_lambda_permission" "allow_cloudwatch_to_call_check" {
+  statement_id  = "AllowExecutionFromCloudWatch"
+  action        = "lambda:InvokeFunction"
+  function_name = "${module.lambda.lambda_function_name}"
+  principal     = "events.amazonaws.com"
+  source_arn    = "${aws_cloudwatch_event_rule.every_ten_seconds.arn}"
+}
