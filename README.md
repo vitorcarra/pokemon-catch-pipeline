@@ -15,9 +15,9 @@
 * Enjoy and have fun while learning!
 
 ## Requirements
-*terraform
-*aws cli version 2
-*python3
+* terraform
+* aws cli version 2
+* python3
 
 ## Manual Configuration
 * Set up ~./credentials file
