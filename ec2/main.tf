@@ -34,6 +34,35 @@ resource "aws_iam_role_policy_attachment" "attach_ssm_policy" {
 }
 
 
+resource "aws_iam_access_key" "logstash_key" {
+  user    = aws_iam_user.losgtash.name
+}
+
+resource "aws_iam_user" "losgtash" {
+  name = "logstashuser"
+}
+
+resource "aws_iam_user_policy" "losgtash_policy" {
+  name = "es_policy"
+  user = aws_iam_user.losgtash.name
+
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "es:*"
+            ],
+            "Effect": "Allow",
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
+
 resource "aws_instance" "data-instance" {
 	ami = "ami-0c2b8ca1dad447f8a"
 	instance_type = "t2.small"
@@ -73,6 +102,7 @@ type=rpm-md
 CONF
 sudo yum -y install logstash
 sudo usermod -a -G logstash ec2-user
+sudo -E /usr/share/logstash/bin/logstash-plugin install logstash-output-amazon_es
 
 mkdir settings
 cat<<CONF >> settings/logstash_kafka.config
@@ -86,10 +116,14 @@ input {
 }
 
 output {
-    elasticsearch {
+    amazon_es {
       hosts => ["${var.elastichost}"]
       index => "pokemon-catches-index"
+      region => "us-east-1"
+      aws_access_key_id => '${aws_iam_access_key.logstash_key.id}'
+      aws_secret_access_key => '${aws_iam_access_key.logstash_key.secret}'
     }
+    
     stdout {
       codec => rubydebug
     }

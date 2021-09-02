@@ -102,4 +102,5 @@ module "elasticsearch" {
     private_subnet_group_id1 = module.network.private_subnet_group_id1
     private_subnet_group_id2 = module.network.private_subnet_group_id2
     public_subnet_group_id1 = module.network.public_subnet_group_id1
+    allow_ip_address = var.allow_ip_address
 }

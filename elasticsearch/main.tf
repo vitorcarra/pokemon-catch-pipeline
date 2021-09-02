@@ -36,19 +36,26 @@ resource "aws_elasticsearch_domain" "es" {
     "rest.action.multi.allow_explicit_index" = "true"
   }
 
-#   access_policies = <<CONFIG
-# {
-#     "Version": "2012-10-17",
-#     "Statement": [
-#         {
-#             "Action": "es:*",
-#             "Principal": "*",
-#             "Effect": "Allow",
-#             "Resource": "arn:aws:es:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:domain/${var.domain}/*"
-#         }
-#     ]
-# }
-# CONFIG
+  access_policies = <<CONFIG
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "*"
+      },
+      "Action": "es:ESHttp*",
+      "Resource": "arn:aws:es:us-east-1:527562940573:domain/es-pokemon-cluster/*",
+      "Condition": {
+        "IpAddress": {
+          "aws:SourceIp": ["${var.allow_ip_address}", "192.168.0.0/16"]
+        }
+      }
+    }
+  ]
+}
+CONFIG
 
   depends_on = [aws_iam_service_linked_role.es]
 }
