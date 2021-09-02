@@ -14,6 +14,8 @@
 * You can go ahead and open up Elasticsearch, create an index pattern and add some Kibana visualization;
 * Enjoy and have fun while learning!
 
+![Alt text](assets/pokemon-catches-datapipeline.jpg?raw=true "Architecture")
+
 ## Requirements
 * terraform
 * aws cli version 2
